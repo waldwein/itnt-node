@@ -1,5 +1,32 @@
 // script.js
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize or restore session
+  let sessionId = sessionStorage.getItem("chatbotSessionId");
+  let chatHistory = [];
+  
+  try {
+    chatHistory = JSON.parse(sessionStorage.getItem("chatHistory") || "[]");
+  } catch (e) {
+    console.error("Error parsing chat history:", e);
+    chatHistory = [];
+  }
+
+  if (!sessionId) {
+    sessionId = generateNewSessionId();
+    sessionStorage.setItem("chatbotSessionId", sessionId);
+  }
+
+  // Helper function to generate new session ID
+  function generateNewSessionId() {
+    return Math.floor(100000000 + Math.random() * 900000000).toString(); // 9 random digits
+  }
+
+  // Helper function to save chat message to history
+  function saveChatMessage(message, type) {
+    chatHistory.push({ message, type });
+    sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+  }
+
   const chatBot = document.createElement("div");
   chatBot.classList.add("itnt_chatBot");
 
@@ -7,23 +34,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const greetingMessage = itntChatbotSettings.greetingMessage;
   const webhookUrl = itntChatbotSettings.webhookUrl;
 
+  // Initialize chat UI with history or greeting message
   chatBot.innerHTML = `
-          <div class="itnt_container">
-            <header class="cb_header">
-                <h2 class="cb_title">ChatBot</h2>
-                <span alt="Close" id="itnt_cross">X</span>
-            </header>
-            <ul class="itnt_chatbox">
-                <li class="itnt_chat-incoming itnt_chat">
-                    <p class="cb_message">${greetingMessage}</p>
-                </li>
-            </ul>
-            <div class="itnt_chat-input">
-              <textarea rows="2" cols="17" placeholder="Enter a message..."></textarea>
-              <button id="itnt_sendBTN">Send</button>
-            </div>
-          </div>
-        `;
+    <div class="itnt_container">
+      <header class="cb_header">
+        <h2 class="cb_title">ChatBot</h2>
+        <button id="itnt_new_session" title="Start New Session">🔄</button>
+        <span alt="Close" id="itnt_cross">X</span>
+      </header>
+      <ul class="itnt_chatbox">
+        ${chatHistory.length > 0 ? 
+          chatHistory.map(msg => `
+            <li class="itnt_chat-${msg.type} itnt_chat">
+              <p class="cb_message">${msg.message}</p>
+            </li>
+          `).join('') :
+          `<li class="itnt_chat-incoming itnt_chat">
+            <p class="cb_message">${greetingMessage}</p>
+          </li>`
+        }
+      </ul>
+      <div class="itnt_chat-input">
+        <textarea rows="2" cols="17" placeholder="Enter a message..."></textarea>
+        <button id="itnt_sendBTN">Send</button>
+      </div>
+    </div>
+  `;
 
   document.body.appendChild(chatBot);
 
@@ -42,13 +78,31 @@ document.addEventListener("DOMContentLoaded", () => {
     return chatLi;
   };
 
+  // New session button handler
+  const newSessionBtn = chatBot.querySelector("#itnt_new_session");
+  newSessionBtn.addEventListener("click", () => {
+    // Generate new session ID
+    sessionId = generateNewSessionId();
+    sessionStorage.setItem("chatbotSessionId", sessionId);
+    
+    // Clear chat history
+    chatHistory = [];
+    sessionStorage.removeItem("chatHistory");
+    
+    // Reset chat UI
+    chatbox.innerHTML = '';
+    const greetingLi = createChatLi(greetingMessage, "itnt_chat-incoming");
+    chatbox.appendChild(greetingLi);
+    
+    // Save initial greeting to history
+    saveChatMessage(greetingMessage, "incoming");
+    
+    // Scroll to bottom
+    chatbox.scrollTo(0, chatbox.scrollHeight);
+  });
+
+  // Update generateResponse to use the existing sessionId
   const generateResponse = (incomingChatLi) => {
-    // Generate a numeric session ID for the conversation
-    let sessionId = sessionStorage.getItem("chatbotSessionId");
-    if (!sessionId) {
-      sessionId = Math.floor(100000000 + Math.random() * 900000000).toString(); // 9 random digits
-      sessionStorage.setItem("chatbotSessionId", sessionId);
-    }
     const messageElement = incomingChatLi.querySelector("p");
     const requestOptions = {
       method: "POST",
@@ -56,8 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        chatInput: userMessage, // Send the user's message
-        sessionId: sessionId, // Send the session ID
+        chatInput: userMessage,
+        sessionId: sessionId, // Use the sessionId from the top level
       }),
     };
 
@@ -76,10 +130,14 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(aiResponse);
 
         messageElement.textContent = aiResponse;
+        // Save the bot's response to history
+        saveChatMessage(aiResponse, "incoming");
       })
       .catch((error) => {
         messageElement.classList.add("error");
         messageElement.textContent = "Hoppla, da ist ein Fehler aufgetreten. Versuch's nochmal!";
+        // Save error message to history
+        saveChatMessage(messageElement.textContent, "incoming");
       })
       .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
   };
@@ -87,6 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleChat = () => {
     userMessage = chatInput.value.trim();
     if (!userMessage) return;
+    
+    // Save user message to history
+    saveChatMessage(userMessage, "outgoing");
     
     chatbox.appendChild(createChatLi(userMessage, "itnt_chat-outgoing"));
     chatbox.scrollTo(0, chatbox.scrollHeight);
