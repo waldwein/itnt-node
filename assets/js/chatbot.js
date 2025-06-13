@@ -16,12 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.setItem("chatbotSessionId", sessionId);
   }
 
-  // Helper function to generate new session ID
   function generateNewSessionId() {
-    return Math.floor(100000000 + Math.random() * 900000000).toString(); // 9 random digits
+    return Math.floor(100000000 + Math.random() * 900000000).toString();
   }
 
-  // Helper function to save chat message to history
   function saveChatMessage(message, type) {
     chatHistory.push({ message, type });
     sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
@@ -29,58 +27,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const chatBot = document.createElement("div");
   chatBot.classList.add("itnt_chatBot");
-
-  // Get settings from WordPress
   const greetingMessage = itntChatbotSettings.greetingMessage;
   const webhookUrl = itntChatbotSettings.webhookUrl;
+  const chatTitle = itntChatbotSettings.title;
 
-  // Initialize chat UI with history or greeting message
+  // Helper function to create message elements
+  function createChatElement(message, type) {
+    const chatDiv = document.createElement("div");
+    chatDiv.classList.add("itnt_chat", `itnt_chat-${type}`);
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("itnt_message");
+    messageDiv.textContent = message;
+    chatDiv.appendChild(messageDiv);
+    return chatDiv;
+  }
+
+  // Initialize chat UI
   chatBot.innerHTML = `
-    <div class="itnt_container">
-      <header class="cb_header">
-        <h2 class="cb_title">ChatBot</h2>
-        <button id="itnt_new_session" title="Start New Session">🔄</button>
-        <span alt="Close" id="itnt_cross">X</span>
-      </header>
-      <ul class="itnt_chatbox">
+    <div class="itnt_container">      <div class="itnt_header">
+        <span class="itnt_title">${chatTitle}</span>
+        <button class="itnt_btn itnt_btn-reset" title="Start New Session">🔄</button>
+        <button class="itnt_btn itnt_btn-close" aria-label="Close">X</button>
+      </div>
+      <div class="itnt_chatbox">
         ${chatHistory.length > 0 ? 
           chatHistory.map(msg => `
-            <li class="itnt_chat-${msg.type} itnt_chat">
-              <p class="cb_message">${msg.message}</p>
-            </li>
+            <div class="itnt_chat itnt_chat-${msg.type}">
+              <div class="itnt_message">${msg.message}</div>
+            </div>
           `).join('') :
-          `<li class="itnt_chat-incoming itnt_chat">
-            <p class="cb_message">${greetingMessage}</p>
-          </li>`
+          `<div class="itnt_chat itnt_chat-incoming">
+            <div class="itnt_message">${greetingMessage}</div>
+          </div>`
         }
-      </ul>
+      </div>
       <div class="itnt_chat-input">
-        <textarea rows="2" cols="17" placeholder="Enter a message..."></textarea>
-        <button id="itnt_sendBTN">Send</button>
+        <textarea class="itnt_input" rows="2" placeholder="Enter a message..."></textarea>
+        <button class="itnt_btn itnt_btn-send">Send</button>
       </div>
     </div>
   `;
 
   document.body.appendChild(chatBot);
 
-  const chatInput = chatBot.querySelector(".itnt_chat-input textarea");
-  const sendChatBtn = chatBot.querySelector("#itnt_sendBTN");
+  // Get UI elements
+  const chatInput = chatBot.querySelector(".itnt_input");
+  const sendChatBtn = chatBot.querySelector(".itnt_btn-send");
   const chatbox = chatBot.querySelector(".itnt_chatbox");
+  const resetBtn = chatBot.querySelector(".itnt_btn-reset");
+  const closeBtn = chatBot.querySelector(".itnt_btn-close");
 
-  let userMessage;
-
-  // Fixing the createChatLi function to use document.createElement
-  const createChatLi = (message, className) => {
-    const chatLi = document.createElement("li");
-    chatLi.classList.add("itnt_chat", className);
-    let chatContent = `<p>${message}</p>`;
-    chatLi.innerHTML = chatContent;
-    return chatLi;
-  };
+  // Create floating chat button
+  const chatOpenBtn = document.createElement("button");
+  chatOpenBtn.className = "itnt_open-btn";
+  chatOpenBtn.title = "Chat öffnen";
+  chatOpenBtn.innerHTML = '<div class="itnt_call-btn-content">💬</div>';
+  document.body.appendChild(chatOpenBtn);
 
   // New session button handler
-  const newSessionBtn = chatBot.querySelector("#itnt_new_session");
-  newSessionBtn.addEventListener("click", () => {
+  resetBtn.addEventListener("click", () => {
     // Generate new session ID
     sessionId = generateNewSessionId();
     sessionStorage.setItem("chatbotSessionId", sessionId);
@@ -91,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Reset chat UI
     chatbox.innerHTML = '';
-    const greetingLi = createChatLi(greetingMessage, "itnt_chat-incoming");
+    const greetingLi = createChatElement(greetingMessage, "incoming");
     chatbox.appendChild(greetingLi);
     
     // Save initial greeting to history
@@ -101,111 +106,94 @@ document.addEventListener("DOMContentLoaded", () => {
     chatbox.scrollTo(0, chatbox.scrollHeight);
   });
 
-  // Update generateResponse to use the existing sessionId
-  const generateResponse = (incomingChatLi) => {
-    const messageElement = incomingChatLi.querySelector("p");
-    const requestOptions = {
+  function generateResponse(chatElement) {
+    const messageElement = chatElement.querySelector(".itnt_message");
+    
+    fetch(webhookUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chatInput: userMessage,
-        sessionId: sessionId, // Use the sessionId from the top level
-      }),
-    };
-
-    fetch(webhookUrl, requestOptions)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return res.json();
+        sessionId: sessionId
       })
-      .then((data) => {
-        // Show the actual AI/agent response from n8n
-        // Try to find a response property, fallback to a generic message if not found
-        // let aiResponse = data.response || data.result || data.message || data.reply || "Antwort erhalten.";
-        let aiResponse = data.output;
-        console.log(aiResponse);
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
+    })
+    .then(data => {
+      const aiResponse = data.output;
+      messageElement.textContent = aiResponse;
+      saveChatMessage(aiResponse, "incoming");
+    })
+    .catch(error => {
+      const errorMessage = "Hoppla, da ist ein Fehler aufgetreten. Versuch's nochmal!";
+      messageElement.textContent = errorMessage;
+      messageElement.classList.add("error");
+      saveChatMessage(errorMessage, "incoming");
+    })
+    .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
+  }
 
-        messageElement.textContent = aiResponse;
-        // Save the bot's response to history
-        saveChatMessage(aiResponse, "incoming");
-      })
-      .catch((error) => {
-        messageElement.classList.add("error");
-        messageElement.textContent = "Hoppla, da ist ein Fehler aufgetreten. Versuch's nochmal!";
-        // Save error message to history
-        saveChatMessage(messageElement.textContent, "incoming");
-      })
-      .finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
-  };
+  function handleChat() {
+    const message = chatInput.value.trim();
+    if (!message) return;
 
-  const handleChat = () => {
-    userMessage = chatInput.value.trim();
-    if (!userMessage) return;
+    // Save and display user message
+    const userChatElement = createChatElement(message, "outgoing");
+    chatbox.appendChild(userChatElement);
+    saveChatMessage(message, "outgoing");
     
-    // Save user message to history
-    saveChatMessage(userMessage, "outgoing");
-    
-    chatbox.appendChild(createChatLi(userMessage, "itnt_chat-outgoing"));
-    chatbox.scrollTo(0, chatbox.scrollHeight);
+    // Clear input and prepare for response
     chatInput.value = "";
+    userMessage = message;
 
+    // Show typing indicator and generate response
     setTimeout(() => {
-      const incomingChatLi = createChatLi("...", "itnt_chat-incoming");
-      chatbox.appendChild(incomingChatLi);
+      const botChatElement = createChatElement("...", "incoming");
+      chatbox.appendChild(botChatElement);
       chatbox.scrollTo(0, chatbox.scrollHeight);
-      generateResponse(incomingChatLi);
+      generateResponse(botChatElement);
     }, 600);
-  };
+  }
 
+  // Event Listeners
   sendChatBtn.addEventListener("click", handleChat);
-
-  // Adding support for 'Enter' key press in the textarea
-  chatInput.addEventListener("keypress", (event) => {
+  
+  chatInput.addEventListener("keypress", event => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleChat();
     }
   });
 
-  // Create the floating chat open button (hidden by default)
-  const chatOpenBtn = document.createElement("button");
-  chatOpenBtn.id = "itnt_chatOpenBtn";
-  chatOpenBtn.title = "Chat öffnen";
-  chatOpenBtn.innerHTML = `
-    <div class="itnt_call-btn-container">💬</div>
-  `;
-  chatOpenBtn.style.display = "none";
-  document.body.appendChild(chatOpenBtn);
+  resetBtn.addEventListener("click", () => {
+    sessionId = generateNewSessionId();
+    sessionStorage.setItem("chatbotSessionId", sessionId);
+    chatHistory = [];
+    sessionStorage.removeItem("chatHistory");
+    chatbox.innerHTML = "";
+    const greetingElement = createChatElement(greetingMessage, "incoming");
+    chatbox.appendChild(greetingElement);
+    saveChatMessage(greetingMessage, "incoming");
+    chatbox.scrollTo(0, chatbox.scrollHeight);
+  });
 
-  // Show chatbot and hide open button
+  // UI visibility functions
   function showChatbot() {
     chatBot.style.display = "block";
     chatOpenBtn.style.display = "none";
-    // Focus the textarea when chatbot opens
-    setTimeout(() => {
-      chatInput.focus();
-    }, 100); // Small delay to ensure DOM is ready
+    setTimeout(() => chatInput.focus(), 100);
   }
 
-  // Hide chatbot and show open button
-  function cancel() {
+  function hideChat() {
     chatBot.style.display = "none";
     chatOpenBtn.style.display = "block";
   }
 
-  // Open chatbot when round button is clicked
   chatOpenBtn.addEventListener("click", showChatbot);
+  closeBtn.addEventListener("click", hideChat);
 
-  // Remove inline onclick and use event delegation for close button
-  chatBot.querySelector("#itnt_cross").addEventListener("click", cancel);
-
-  // On page load, show only the round button, hide the chatbot
-  window.addEventListener("DOMContentLoaded", () => {
-    chatBot.style.display = "none";
-    chatOpenBtn.style.display = "block";
-  });
+  // Initial state
+  hideChat();
 });

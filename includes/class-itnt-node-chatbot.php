@@ -29,14 +29,13 @@ class ITNT_Node_Chatbot{
             array(),
             null,
             true
-        );
-
-        wp_localize_script(
+        );        wp_localize_script(
             'custom_script',
             'itntChatbotSettings',
             array(
                 'greetingMessage' => get_option('itnt_node_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?'),
                 'webhookUrl' => get_option('itnt_node_webhook_url', ''),
+                'title' => get_option('itnt_node_title', 'ChatBot'),
             )
         );
 

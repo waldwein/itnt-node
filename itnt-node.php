@@ -27,6 +27,7 @@ require_once ITNT_NODE_PLUGIN_DIR . 'includes/class-itnt-node.php';
 function itnt_node_activate() {
     // Set default settings
     add_option('itnt_node_enable_feature', true);
+    add_option('itnt_node_title', 'ChatBot');
     add_option('itnt_node_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?');
     add_option('itnt_node_webhook_url', '');
 
@@ -40,6 +41,7 @@ function itnt_node_activate() {
 function itnt_node_deactivate() {
     // If you want to keep settings, remove these lines
     delete_option('itnt_node_enable_feature');
+    delete_option('itnt_node_title');
     delete_option('itnt_node_greeting_message');
     delete_option('itnt_node_webhook_url');
 

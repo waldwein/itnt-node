@@ -30,6 +30,12 @@ class ITNT_Node_Admin {
             'sanitize_callback' => 'rest_sanitize_boolean',
             'default'          => true,
             'show_in_rest'     => true,
+        ]);        // Add chatbot title setting
+        register_setting('itnt_node_general', 'itnt_node_title', [
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'          => 'ChatBot',
+            'show_in_rest'     => true,
         ]);
 
         // Add greeting message setting
@@ -64,6 +70,13 @@ class ITNT_Node_Admin {
             'itnt_node_general',
             'itnt_node_general_section',
             ['label_for' => 'itnt_node_enable_feature']
+        );        add_settings_field(
+            'itnt_node_title',
+            'ChatBot Title',
+            [$this, 'title_callback'],
+            'itnt_node_general',
+            'itnt_node_general_section',
+            ['label_for' => 'itnt_node_title']
         );
 
         add_settings_field(
@@ -95,6 +108,13 @@ class ITNT_Node_Admin {
         $option = get_option('itnt_node_enable_feature', false);
         echo '<input type="checkbox" id="itnt_node_enable_feature" name="itnt_node_enable_feature" value="1" ' . checked(1, $option, false) . ' />';
         echo '<label for="itnt_node_enable_feature">Enable</label>';
+    }
+
+    // Title field callback
+    public function title_callback() {
+        $option = get_option('itnt_node_title', 'ChatBot');
+        echo '<input type="text" id="itnt_node_title" name="itnt_node_title" value="' . esc_attr($option) . '" class="regular-text" />';
+        echo '<p class="description">Enter the title for your chatbot.</p>';
     }
 
     // New callback for greeting message
