@@ -25,34 +25,44 @@ class ITNT_Node_Admin {
     // Register a settings section and field
     public function register_settings() {
         // Existing chatbot enable/disable setting
-        register_setting('itnt_node_general', 'itnt_node_enable_feature', [
+        register_setting('itnt_node_general', 'itnt_node_enable_feature', array(
             'type'              => 'boolean',
             'sanitize_callback' => 'rest_sanitize_boolean',
             'default'          => true,
-            'show_in_rest'     => true,
-        ]);        // Add chatbot title setting
-        register_setting('itnt_node_general', 'itnt_node_title', [
+            'show_in_rest'     => true
+        ));
+
+        // Add chatbot title setting
+        register_setting('itnt_node_general', 'itnt_node_title', array(
             'type'              => 'string',
             'sanitize_callback' => 'sanitize_text_field',
             'default'          => 'ChatBot',
-            'show_in_rest'     => true,
-        ]);
+            'show_in_rest'     => true
+        ));
 
         // Add greeting message setting
-        register_setting('itnt_node_general', 'itnt_node_greeting_message', [
+        register_setting('itnt_node_general', 'itnt_node_greeting_message', array(
             'type'              => 'string',
             'sanitize_callback' => 'sanitize_text_field',
             'default'          => 'Hallo! Wie kann ich Dir heute helfen?',
-            'show_in_rest'     => true,
-        ]);
+            'show_in_rest'     => true
+        ));
 
         // Add webhook URL setting
-        register_setting('itnt_node_general', 'itnt_node_webhook_url', [
+        register_setting('itnt_node_general', 'itnt_node_webhook_url', array(
             'type'              => 'string',
             'sanitize_callback' => 'esc_url_raw',
             'default'          => '',
-            'show_in_rest'     => true,
-        ]);
+            'show_in_rest'     => true
+        ));
+
+        // Add privacy notice setting
+        register_setting('itnt_node_general', 'itnt_node_privacy_notice', array(
+            'type'              => 'string',
+            'sanitize_callback' => 'wp_kses_post',
+            'default'          => 'Durch die Nutzung unseres Chatbots stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer Datenschutzerklärung zu. Ihre Nachrichten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.',
+            'show_in_rest'     => true
+        ));
 
         // Add settings section
         add_settings_section(
@@ -70,7 +80,9 @@ class ITNT_Node_Admin {
             'itnt_node_general',
             'itnt_node_general_section',
             ['label_for' => 'itnt_node_enable_feature']
-        );        add_settings_field(
+        );
+
+        add_settings_field(
             'itnt_node_title',
             'ChatBot Title',
             [$this, 'title_callback'],
@@ -86,6 +98,15 @@ class ITNT_Node_Admin {
             'itnt_node_general',
             'itnt_node_general_section',
             ['label_for' => 'itnt_node_greeting_message']
+        );
+
+        add_settings_field(
+            'itnt_node_privacy_notice',
+            'Privacy Notice (DSGVO)',
+            [$this, 'privacy_notice_callback'],
+            'itnt_node_general',
+            'itnt_node_general_section',
+            ['label_for' => 'itnt_node_privacy_notice']
         );
 
         add_settings_field(
@@ -122,6 +143,15 @@ class ITNT_Node_Admin {
         $option = get_option('itnt_node_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?');
         echo '<input type="text" id="itnt_node_greeting_message" name="itnt_node_greeting_message" value="' . esc_attr($option) . '" class="regular-text" />';
         echo '<p class="description">Enter the greeting message.</p>';
+    }
+
+    // New callback for privacy notice
+    public function privacy_notice_callback() {
+        $option = get_option('itnt_node_privacy_notice');
+        ?>
+        <textarea id="itnt_node_privacy_notice" name="itnt_node_privacy_notice" rows="5" class="large-text"><?php echo esc_textarea($option); ?></textarea>
+        <p class="description">Enter the privacy notice text that users must accept before using the chatbot. HTML is allowed.</p>
+        <?php
     }
 
     // New callback for webhook URL

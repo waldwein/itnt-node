@@ -32,10 +32,10 @@ class ITNT_Node_Chatbot{
         );        wp_localize_script(
             'custom_script',
             'itntChatbotSettings',
-            array(
-                'greetingMessage' => get_option('itnt_node_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?'),
+            array(                'greetingMessage' => get_option('itnt_node_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?'),
                 'webhookUrl' => get_option('itnt_node_webhook_url', ''),
                 'title' => get_option('itnt_node_title', 'ChatBot'),
+                'privacyNotice' => get_option('itnt_node_privacy_notice', 'Durch die Nutzung unseres Chatbots stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer Datenschutzerklärung zu. Ihre Nachrichten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.'),
             )
         );
 
