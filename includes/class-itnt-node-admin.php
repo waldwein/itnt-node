@@ -28,40 +28,56 @@ class ITNT_Node_Admin {
         register_setting('itnt_node_general', 'itnt_node_enable_feature', array(
             'type'              => 'boolean',
             'sanitize_callback' => 'rest_sanitize_boolean',
-            'default'          => true,
-            'show_in_rest'     => true
+            'default'           => true,
+            'show_in_rest'      => true
         ));
 
         // Add chatbot title setting
         register_setting('itnt_node_general', 'itnt_node_title', array(
-            'type'              => 'string',
-            'sanitize_callback' => 'sanitize_text_field',
-            'default'          => 'ChatBot',
-            'show_in_rest'     => true
+            'type'               => 'string',
+            'sanitize_callback'  => 'sanitize_text_field',
+            'default'            => 'ChatBot',
+            'show_in_rest'       => true
         ));
 
         // Add greeting message setting
         register_setting('itnt_node_general', 'itnt_node_greeting_message', array(
             'type'              => 'string',
             'sanitize_callback' => 'sanitize_text_field',
-            'default'          => 'Hallo! Wie kann ich Dir heute helfen?',
-            'show_in_rest'     => true
+            'default'           => 'Hallo! Wie kann ich Dir heute helfen?',
+            'show_in_rest'      => true
         ));
 
         // Add webhook URL setting
         register_setting('itnt_node_general', 'itnt_node_webhook_url', array(
             'type'              => 'string',
             'sanitize_callback' => 'esc_url_raw',
-            'default'          => '',
-            'show_in_rest'     => true
+            'default'           => '',
+            'show_in_rest'      => true
         ));
 
         // Add privacy notice setting
         register_setting('itnt_node_general', 'itnt_node_privacy_notice', array(
             'type'              => 'string',
             'sanitize_callback' => 'wp_kses_post',
-            'default'          => 'Durch die Nutzung unseres Chatbots stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer Datenschutzerklärung zu. Ihre Nachrichten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.',
-            'show_in_rest'     => true
+            'default'           => 'Durch die Nutzung unseres Chatbots stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer Datenschutzerklärung zu. Ihre Nachrichten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.',
+            'show_in_rest'      => true
+        ));
+
+        // Add message limit reached text setting
+        register_setting('itnt_node_general', 'itnt_node_limit_message', array(
+            'type'              => 'string',
+            'sanitize_callback' => 'wp_kses_post',
+            'default'           => 'Du hast das Limit erreicht. Bitte kontaktiere uns unter info@example.com oder ruf uns an!',
+            'show_in_rest'      => true
+        ));
+
+        // Add message limit setting
+        register_setting('itnt_node_general', 'itnt_node_message_limit', array(
+            'type'              => 'integer',
+            'sanitize_callback' => 'absint',
+            'default'           => 10,
+            'show_in_rest'      => true
         ));
 
         // Add settings section
@@ -117,6 +133,24 @@ class ITNT_Node_Admin {
             'itnt_node_general_section',
             ['label_for' => 'itnt_node_webhook_url']
         );
+
+        add_settings_field(
+            'itnt_node_message_limit',
+            'Message Limit',
+            [$this, 'message_limit_callback'],
+            'itnt_node_general',
+            'itnt_node_general_section',
+            ['label_for' => 'itnt_node_message_limit']
+        );
+
+        add_settings_field(
+            'itnt_node_limit_message',
+            'Limit Message Text',
+            [$this, 'limit_message_callback'],
+            'itnt_node_general',
+            'itnt_node_general_section',
+            ['label_for' => 'itnt_node_limit_message']
+        );
     }
 
     // Add settings section callback
@@ -159,6 +193,22 @@ class ITNT_Node_Admin {
         $option = get_option('itnt_node_webhook_url', '');
         echo '<input type="url" id="itnt_node_webhook_url" name="itnt_node_webhook_url" value="' . esc_url($option) . '" class="regular-text" />';
         echo '<p class="description">Enter your n8n webhook URL here.</p>';
+    }
+
+    // Limit message field callback
+    public function limit_message_callback() {
+        $option = get_option('itnt_node_limit_message');
+        ?>
+        <textarea id="itnt_node_limit_message" name="itnt_node_limit_message" rows="3" class="large-text"><?php echo esc_textarea($option); ?></textarea>
+        <p class="description">Text, der angezeigt wird, wenn das Nachrichtenlimit erreicht ist. HTML ist erlaubt. Beispiel: "Du hast das Limit erreicht. Bitte kontaktiere uns unter info@example.com oder ruf uns an!"</p>
+        <?php
+    }
+
+    // Message limit field callback
+    public function message_limit_callback() {
+        $option = get_option('itnt_node_message_limit', 10);
+        echo '<input type="number" min="1" id="itnt_node_message_limit" name="itnt_node_message_limit" value="' . esc_attr($option) . '" class="small-text" style="width:80px;" />';
+        echo '<p class="description">Maximale Anzahl an Nachrichten pro Nutzer und Sitzung.</p>';
     }
 
     public function add_admin_menu(){
