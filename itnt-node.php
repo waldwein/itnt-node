@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Plugin Name:       ITNT - Node
- * Description:       Custom Pluging
+ * Plugin Name:       GetGenius - Chatbot
+ * Description:       Intelligenter Multi-Assistant-Chatbot für WordPress. Verbinde dich per Webhook mit verschiedenen KI-Assistenten und biete deinen Website-Besuchern automatisierte, personalisierte Antworten in Echtzeit.
  * Version:           0.1.0
  * Requires at least: 6.7
  * Requires PHP:      7.4
- * Author:            The WordPress Contributors
+ * Author:            GetGenius
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
