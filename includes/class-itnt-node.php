@@ -46,7 +46,7 @@ class ITNT_Node {
 
 
     private function initialize_chatbot() {
-        $this->chatbot = new ITNT_Node_Chatbot();
+        $this->chatbot = new GetGenius_Chatbot(); // class-itnt-node-chatbot
         $this->chatbot->init();
     }
 }

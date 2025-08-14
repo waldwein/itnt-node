@@ -8,7 +8,7 @@ class ITNT_Node_Admin {
     private $loader;
 
     public function __construct(){
-        $this->loader = new ITNT_Node_Loader();
+        $this->loader = new GetGenius_Loader();
     }
 
     public function init() {

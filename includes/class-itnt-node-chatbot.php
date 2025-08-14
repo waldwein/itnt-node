@@ -4,11 +4,11 @@ if (!defined('ABSPATH')) {
     die('-1');
 }
 
-class ITNT_Node_Chatbot{
+class GetGenius_Chatbot {
     private $loader;
 
     public function __construct(){
-        $this->loader = new ITNT_Node_Loader();
+        $this->loader = new GetGenius_Loader();
     }
 
 

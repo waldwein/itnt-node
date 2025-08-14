@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class ITNT_Node_Loader {
+class GetGenius_Loader {
 
     protected $actions;
     protected $filters;
