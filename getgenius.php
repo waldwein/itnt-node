@@ -16,20 +16,20 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('ITNT_NODE_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('ITNT_NODE_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('GETGENIUS_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('GETGENIUS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-require_once ITNT_NODE_PLUGIN_DIR . 'includes/class-itnt-node.php';
+require_once GETGENIUS_PLUGIN_DIR . 'includes/class-getgenius.php';
 
 /**
  * Plugin activation: set up initial settings
  */
-function itnt_node_activate() {
+function getgenius_activate() {
     // Set default settings
-    add_option('itnt_node_enable_feature', true);
-    add_option('itnt_node_title', 'ChatBot');
-    add_option('itnt_node_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?');
-    add_option('itnt_node_webhook_url', '');
+    add_option('getgenius_enable_feature', true);
+    add_option('getgenius_title', 'ChatBot');
+    add_option('getgenius_greeting_message', 'Hallo! Wie kann ich Dir heute helfen?');
+    add_option('getgenius_webhook_url', '');
 
     // Clear any rewrite rules
     flush_rewrite_rules();
@@ -38,12 +38,12 @@ function itnt_node_activate() {
 /**
  * Plugin deactivation: clean up if needed
  */
-function itnt_node_deactivate() {
+function getgenius_deactivate() {
     // If you want to keep settings, remove these lines
-    delete_option('itnt_node_enable_feature');
-    delete_option('itnt_node_title');
-    delete_option('itnt_node_greeting_message');
-    delete_option('itnt_node_webhook_url');
+    delete_option('getgenius_enable_feature');
+    delete_option('getgenius_title');
+    delete_option('getgenius_greeting_message');
+    delete_option('getgenius_webhook_url');
 
     // Clear any rewrite rules
     flush_rewrite_rules();
@@ -52,14 +52,14 @@ function itnt_node_deactivate() {
 /**
  * Plugin initialization
  */
-function itnt_node_init() {
-    $itnt_node = ITNT_Node::get_instance();
-    $itnt_node->init();
+function getgenius_init() {
+    $getgenius = GetGenius::get_instance();
+    $getgenius->init();
 }
 
 // Register activation/deactivation hooks
-register_activation_hook(__FILE__, 'itnt_node_activate');
-register_deactivation_hook(__FILE__, 'itnt_node_deactivate');
+register_activation_hook(__FILE__, 'getgenius_activate');
+register_deactivation_hook(__FILE__, 'getgenius_deactivate');
 
 // Initialize plugin
-add_action('plugins_loaded', 'itnt_node_init');
+add_action('plugins_loaded', 'getgenius_init');

@@ -28,74 +28,74 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const chatBot = document.createElement("div");
-    chatBot.classList.add("itnt_chatBot");
-    const greetingMessage = itntChatbotSettings.greetingMessage;
-    const webhookUrl = itntChatbotSettings.webhookUrl;
-    const chatTitle = itntChatbotSettings.title;
-    const privacyNotice = itntChatbotSettings.privacyNotice;
-    const messageLimit = parseInt(itntChatbotSettings.messageLimit, 10) || 10;
+    chatBot.classList.add("getgenius_chatBot");
+    const greetingMessage = getgeniusChatbotSettings.greetingMessage;
+    const webhookUrl = getgeniusChatbotSettings.webhookUrl;
+    const chatTitle = getgeniusChatbotSettings.title;
+    const privacyNotice = getgeniusChatbotSettings.privacyNotice;
+    const messageLimit = parseInt(getgeniusChatbotSettings.messageLimit, 10) || 10;
     let messageCount = parseInt(sessionStorage.getItem("chatbotMessageCount") || "0", 10);
     const limitMessage =
-        itntChatbotSettings.limitMessage ||
+        getgeniusChatbotSettings.limitMessage ||
         "Du hast das Limit erreicht. Bitte kontaktiere uns unter info@example.com oder ruf uns an!";
 
     // Helper function to create message elements
 
     function createChatElement(message, type) {
         const chatDiv = document.createElement("div");
-        chatDiv.classList.add("itnt_chat", `itnt_chat-${type}`);
+        chatDiv.classList.add("getgenius_chat", `getgenius_chat-${type}`);
         const messageDiv = document.createElement("div");
-        messageDiv.classList.add("itnt_message");
+        messageDiv.classList.add("getgenius_message");
         messageDiv.textContent = message;
         chatDiv.appendChild(messageDiv);
         return chatDiv;
     }
     // Initialize chat UI with privacy notice overlay
     chatBot.innerHTML = `
-    <div class="itnt_container">
+    <div class="getgenius_container">
       ${
           !privacyAccepted
               ? `
-        <div class="itnt_privacy_overlay">
-          <div class="itnt_privacy_content">
+        <div class="getgenius_privacy_overlay">
+          <div class="getgenius_privacy_content">
             <h3>Datenschutzhinweis</h3>
             <p>${privacyNotice}</p>
-            <div class="itnt_privacy_buttons">
-              <button class="itnt_btn itnt_btn-accept">Akzeptieren</button>
-              <button class="itnt_btn itnt_btn-decline">Ablehnen</button>
+            <div class="getgenius_privacy_buttons">
+              <button class="getgenius_btn getgenius_btn-accept">Akzeptieren</button>
+              <button class="getgenius_btn getgenius_btn-decline">Ablehnen</button>
             </div>
           </div>
         </div>
       `
               : ""
       }
-      <div class="itnt_header">
-        <span class="itnt_title">${chatTitle}</span>
-        <button class="itnt_btn itnt_btn-reset" title="Start New Session">🔄</button>
-        <button class="itnt_btn itnt_btn-close" aria-label="Close">X</button>
+      <div class="getgenius_header">
+        <span class="getgenius_title">${chatTitle}</span>
+        <button class="getgenius_btn getgenius_btn-reset" title="Start New Session">🔄</button>
+        <button class="getgenius_btn getgenius_btn-close" aria-label="Close">X</button>
       </div>
-      <div class="itnt_chatbox">
+      <div class="getgenius_chatbox">
         ${
             chatHistory.length > 0
                 ? chatHistory
                       .map(
                           (msg) => `
-            <div class="itnt_chat itnt_chat-${msg.type}">
-              <div class="itnt_message">${msg.message}</div>
+            <div class="getgenius_chat getgenius_chat-${msg.type}">
+              <div class="getgenius_message">${msg.message}</div>
             </div>
           `
                       )
                       .join("")
-                : `<div class="itnt_chat itnt_chat-incoming">
-            <div class="itnt_message">${greetingMessage}</div>
+                : `<div class="getgenius_chat getgenius_chat-incoming">
+            <div class="getgenius_message">${greetingMessage}</div>
           </div>`
         }
       </div>
-      <div class="itnt_chat-input">
-        <textarea class="itnt_input" rows="2" placeholder="Enter a message..." ${
+      <div class="getgenius_chat-input">
+        <textarea class="getgenius_input" rows="2" placeholder="Enter a message..." ${
             !privacyAccepted ? "disabled" : ""
         }></textarea>
-        <button class="itnt_btn itnt_btn-send" ${!privacyAccepted ? "disabled" : ""}>Send</button>
+        <button class="getgenius_btn getgenius_btn-send" ${!privacyAccepted ? "disabled" : ""}>Send</button>
       </div>
     </div>
   `;
@@ -103,17 +103,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(chatBot);
 
     // Get UI elements
-    const chatInput = chatBot.querySelector(".itnt_input");
-    const sendChatBtn = chatBot.querySelector(".itnt_btn-send");
-    const chatbox = chatBot.querySelector(".itnt_chatbox");
-    const resetBtn = chatBot.querySelector(".itnt_btn-reset");
-    const closeBtn = chatBot.querySelector(".itnt_btn-close");
+    const chatInput = chatBot.querySelector(".getgenius_input");
+    const sendChatBtn = chatBot.querySelector(".getgenius_btn-send");
+    const chatbox = chatBot.querySelector(".getgenius_chatbox");
+    const resetBtn = chatBot.querySelector(".getgenius_btn-reset");
+    const closeBtn = chatBot.querySelector(".getgenius_btn-close");
 
     // Create floating chat button
     const chatOpenBtn = document.createElement("button");
-    chatOpenBtn.className = "itnt_open-btn";
+    chatOpenBtn.className = "getgenius_open-btn";
     chatOpenBtn.title = "Chat öffnen";
-    chatOpenBtn.innerHTML = '<div class="itnt_call-btn-content">💬</div>';
+    chatOpenBtn.innerHTML = '<div class="getgenius_call-btn-content">💬</div>';
     document.body.appendChild(chatOpenBtn);
 
     // New session button handler
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateResponse(chatElement, message) {
         // Add message parameter
-        const messageElement = chatElement.querySelector(".itnt_message");
+        const messageElement = chatElement.querySelector(".getgenius_message");
 
         fetch(webhookUrl, {
             method: "POST",
@@ -237,10 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!privacyAccepted) {
             chatBot.style.display = "block";
             chatOpenBtn.style.display = "none";
-            const privacyOverlay = chatBot.querySelector(".itnt_privacy_overlay");
+            const privacyOverlay = chatBot.querySelector(".getgenius_privacy_overlay");
             if (privacyOverlay) {
-                const acceptBtn = privacyOverlay.querySelector(".itnt_btn-accept");
-                const declineBtn = privacyOverlay.querySelector(".itnt_btn-decline");
+                const acceptBtn = privacyOverlay.querySelector(".getgenius_btn-accept");
+                const declineBtn = privacyOverlay.querySelector(".getgenius_btn-decline");
 
                 acceptBtn.addEventListener("click", () => {
                     privacyOverlay.classList.add("hiding");
