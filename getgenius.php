@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name:       GetGenius - Chatbot
+ * Plugin Name:       GetGenius AI
  * Description:       Intelligenter Multi-Assistant-Chatbot für WordPress. Verbinde dich per Webhook mit verschiedenen KI-Assistenten und biete deinen Website-Besuchern automatisierte, personalisierte Antworten in Echtzeit.
  * Version:           0.1.0
  * Requires at least: 6.7
