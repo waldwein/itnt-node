@@ -31,6 +31,7 @@ class GetGenius_Chatbot {
                 'privacyNotice'     => get_option('getgenius_privacy_notice', 'Durch die Nutzung unseres Chatbots stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer Datenschutzerklärung zu. Ihre Nachrichten werden verschlüsselt übertragen und nicht dauerhaft gespeichert.'),
                 'limitMessage'      => get_option('getgenius_limit_message', 'Du hast das Limit erreicht. Bitte kontaktiere uns unter info@example.com oder ruf uns an!'),
                 'messageLimit'      => get_option('getgenius_message_limit', 10),
+                'messageLimitGlobal' => get_option('getgenius_message_limit_global', 1000),
             )
         );
         wp_enqueue_style('custom-chatbot-style', GETGENIUS_PLUGIN_URL . 'assets/css/chatbot.css', array());

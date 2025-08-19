@@ -35,6 +35,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const privacyNotice = getgeniusChatbotSettings.privacyNotice;
     const messageLimit = parseInt(getgeniusChatbotSettings.messageLimit, 10) || 10;
     let messageCount = parseInt(sessionStorage.getItem("chatbotMessageCount") || "0", 10);
+    const messageLimitGlobal = parseInt(getgeniusChatbotSettings.messageLimitGlobal, 10) || 1000;
+    // Use localStorage for global per-day count (browser-wide)
+    const todayKey = `chatbotGlobalDate`;
+    const countKey = `chatbotGlobalCount`;
+    const today = new Date().toISOString().slice(0, 10);
+    let globalDate = localStorage.getItem(todayKey);
+    let globalCount = parseInt(localStorage.getItem(countKey) || "0", 10);
+    if (globalDate !== today) {
+        globalDate = today;
+        globalCount = 0;
+        localStorage.setItem(todayKey, today);
+        localStorage.setItem(countKey, globalCount);
+    }
     const limitMessage =
         getgeniusChatbotSettings.limitMessage ||
         "Du hast das Limit erreicht. Bitte kontaktiere uns unter info@example.com oder ruf uns an!";
@@ -50,55 +63,89 @@ document.addEventListener("DOMContentLoaded", () => {
         chatDiv.appendChild(messageDiv);
         return chatDiv;
     }
+
     // Initialize chat UI with privacy notice overlay
     chatBot.innerHTML = `
-    <div class="getgenius_container">
-      ${
-          !privacyAccepted
-              ? `
-        <div class="getgenius_privacy_overlay">
-          <div class="getgenius_privacy_content">
-            <h3>Datenschutzhinweis</h3>
-            <p>${privacyNotice}</p>
-            <div class="getgenius_privacy_buttons">
-              <button class="getgenius_btn getgenius_btn-accept">Akzeptieren</button>
-              <button class="getgenius_btn getgenius_btn-decline">Ablehnen</button>
+        <div class="getgenius_container">
+            ${
+                !privacyAccepted
+                    ? `
+                <div class="getgenius_privacy_overlay">
+                    <div class="getgenius_privacy_content">
+                        <h3>Datenschutzhinweis</h3>
+                        <p>${privacyNotice}</p>
+                        <div class="getgenius_privacy_buttons">
+                            <button class="getgenius_btn getgenius_btn-accept">Akzeptieren</button>
+                            <button class="getgenius_btn getgenius_btn-decline">Ablehnen</button>
+                        </div>
+                    </div>
+                </div>
+            `
+                    : ""
+            }
+            <div class="getgenius_header">
+                <span class="getgenius_title">${chatTitle}</span>
+                <button class="getgenius_btn getgenius_btn-reset" title="Start New Session">🔄</button>
+                <button class="getgenius_btn getgenius_btn-close" aria-label="Close">X</button>
             </div>
-          </div>
+            <div class="getgenius_chatbox">
+                ${
+                    chatHistory.length > 0
+                        ? chatHistory
+                              .map(
+                                  (msg) => `
+                        <div class="getgenius_chat getgenius_chat-${msg.type}">
+                            <div class="getgenius_message">${msg.message}</div>
+                        </div>
+                    `
+                              )
+                              .join("")
+                        : `<div class="getgenius_chat getgenius_chat-incoming">
+                        <div class="getgenius_message">${greetingMessage}</div>
+                    </div>`
+                }
+            </div>
+            <div class="getgenius_chat-input">
+                <textarea class="getgenius_input" rows="2" placeholder="Enter a message..." ${
+                    !privacyAccepted ? "disabled" : ""
+                }></textarea>
+                <button class="getgenius_btn getgenius_btn-send" ${!privacyAccepted ? "disabled" : ""}>Send</button>
+            </div>
         </div>
-      `
-              : ""
-      }
-      <div class="getgenius_header">
-        <span class="getgenius_title">${chatTitle}</span>
-        <button class="getgenius_btn getgenius_btn-reset" title="Start New Session">🔄</button>
-        <button class="getgenius_btn getgenius_btn-close" aria-label="Close">X</button>
-      </div>
-      <div class="getgenius_chatbox">
-        ${
-            chatHistory.length > 0
-                ? chatHistory
-                      .map(
-                          (msg) => `
-            <div class="getgenius_chat getgenius_chat-${msg.type}">
-              <div class="getgenius_message">${msg.message}</div>
-            </div>
-          `
-                      )
-                      .join("")
-                : `<div class="getgenius_chat getgenius_chat-incoming">
-            <div class="getgenius_message">${greetingMessage}</div>
-          </div>`
+    `;
+
+    // Attach privacy button event listeners if overlay exists
+    setTimeout(() => {
+        const privacyOverlay = chatBot.querySelector(".getgenius_privacy_overlay");
+        if (privacyOverlay) {
+            const acceptBtn = privacyOverlay.querySelector(".getgenius_btn-accept");
+            const declineBtn = privacyOverlay.querySelector(".getgenius_btn-decline");
+            if (acceptBtn && !acceptBtn.hasAttribute("data-listener")) {
+                acceptBtn.setAttribute("data-listener", "true");
+                acceptBtn.addEventListener("click", () => {
+                    privacyOverlay.classList.add("hiding");
+                    setTimeout(() => {
+                        privacyAccepted = true;
+                        sessionStorage.setItem("chatbotPrivacyAccepted", "true");
+                        privacyOverlay.remove();
+                        chatInput.disabled = false;
+                        sendChatBtn.disabled = false;
+                        setTimeout(() => chatInput.focus(), 100);
+                    }, 300);
+                });
+            }
+            if (declineBtn && !declineBtn.hasAttribute("data-listener")) {
+                declineBtn.setAttribute("data-listener", "true");
+                declineBtn.addEventListener("click", () => {
+                    privacyOverlay.classList.add("hiding");
+                    setTimeout(() => {
+                        hideChat();
+                        sessionStorage.setItem("chatbotPrivacyAccepted", "false");
+                    }, 300);
+                });
+            }
         }
-      </div>
-      <div class="getgenius_chat-input">
-        <textarea class="getgenius_input" rows="2" placeholder="Enter a message..." ${
-            !privacyAccepted ? "disabled" : ""
-        }></textarea>
-        <button class="getgenius_btn getgenius_btn-send" ${!privacyAccepted ? "disabled" : ""}>Send</button>
-      </div>
-    </div>
-  `;
+    }, 0);
 
     document.body.appendChild(chatBot);
 
@@ -169,17 +216,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleChat() {
+        let blocked = false;
+        // Check per-session limit
         if (messageCount >= messageLimit) {
-            // Disable input and send button immediately
             chatInput.disabled = true;
             sendChatBtn.disabled = true;
-            // Show friendly limit message
             const limitChatElement = createChatElement(limitMessage, "incoming");
             chatbox.appendChild(limitChatElement);
             saveChatMessage(limitMessage, "incoming");
             chatbox.scrollTo(0, chatbox.scrollHeight);
-            return;
+            blocked = true;
         }
+        // Check global per-day limit
+        if (globalCount >= messageLimitGlobal) {
+            chatInput.disabled = true;
+            sendChatBtn.disabled = true;
+            const limitChatElement = createChatElement(limitMessage, "incoming");
+            chatbox.appendChild(limitChatElement);
+            saveChatMessage(limitMessage, "incoming");
+            chatbox.scrollTo(0, chatbox.scrollHeight);
+            blocked = true;
+        }
+        if (blocked) return;
+
         const message = chatInput.value.trim();
         if (!message) return;
 
@@ -191,9 +250,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear input
         chatInput.value = "";
 
-        // Increment message count and persist
-        messageCount++;
-        sessionStorage.setItem("chatbotMessageCount", messageCount);
+        // Increment message count and persist (per session)
+        if (messageCount < messageLimit) {
+            messageCount++;
+            sessionStorage.setItem("chatbotMessageCount", messageCount);
+        }
+        // Increment global count and persist (per day)
+        if (globalCount < messageLimitGlobal) {
+            globalCount++;
+            localStorage.setItem(countKey, globalCount);
+        }
 
         // Show typing indicator and generate response
         setTimeout(() => {
@@ -289,8 +355,11 @@ document.addEventListener("DOMContentLoaded", () => {
         showChatbot();
     });
 
-    // Disable input and send button if limit is already reached on page load
+    // Disable input and send button if any limit is already reached on page load
     if (messageCount >= messageLimit) {
+        chatInput.disabled = true;
+        sendChatBtn.disabled = true;
+    } else if (globalCount >= messageLimitGlobal) {
         chatInput.disabled = true;
         sendChatBtn.disabled = true;
     }
