@@ -83,23 +83,23 @@
 }
 
 .getgenius_chatBot {
-    border: none !important;
-    border-radius: 18px !important;
-    position: fixed !important;
-    bottom: 32px !important;
-    right: 32px !important;
-    width: 392px !important;
-    max-width: 95vw !important;
-    height: 520px !important;
-    max-height: 80vh !important;
-    background: #fff !important;
-    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 1.5px 8px rgba(44, 62, 80, 0.1) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    z-index: 10000 !important;
-    animation: fadeIn 0.4s !important;
-    transition: box-shadow 0.2s, background 0.2s !important;
-    overflow: hidden !important;
+    border: none;
+    border-radius: 18px;
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 392px;
+    max-width: 95vw;
+    height: 520px;
+    max-height: 80vh;
+    background: #fff;
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 1.5px 8px rgba(44, 62, 80, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 10000;
+    animation: fadeIn 0.4s;
+    transition: box-shadow 0.2s, background 0.2s;
+    overflow: hidden;
 }
 
 .getgenius_container {
@@ -111,16 +111,16 @@
 }
 
 .getgenius_header {
-    background: linear-gradient(90deg, #23272f 60%, #444950 100%) !important;
-    text-align: left !important;
-    padding: 18px 24px 14px 24px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-    position: relative !important;
-    border-top-left-radius: 18px !important;
-    border-top-right-radius: 18px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    background: linear-gradient(90deg, #23272f 60%, #444950 100%);
+    text-align: left;
+    padding: 18px 24px 14px 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    position: relative;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 .getgenius_title {
     color: #fff;
@@ -167,18 +167,18 @@
 }
 
 .getgenius_chatbox {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    max-height: 100% !important;
-    overflow-y: auto !important;
-    background: #f8f9fa !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    margin: 0 !important;
-    scrollbar-width: thin !important;
-    scrollbar-color: #e0e0e0 #f8f9fa !important;
-    padding: 20px 6px 10px 20px !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #e0e0e0 #f8f9fa;
+    padding: 20px 6px 10px 20px;
 }
 .getgenius_chatbox::-webkit-scrollbar {
     width: 7px;
@@ -188,105 +188,105 @@
     border-radius: 6px;
 }
 .getgenius_chat {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .getgenius_chat-incoming .getgenius_message {
-    background: #f1f3f4 !important;
-    color: #222 !important;
-    align-self: flex-start !important;
-    border-bottom-left-radius: 0 !important;
-    border-top-left-radius: 8px !important;
-    border-top-right-radius: 16px !important;
-    border-bottom-right-radius: 16px !important;
-    margin-bottom: 2px !important;
+    background: #f1f3f4;
+    color: #222;
+    align-self: flex-start;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    margin-bottom: 2px;
 }
 
 .getgenius_chat-outgoing {
-    align-items: flex-end !important;
+    align-items: flex-end;
 }
 
 .getgenius_chat-outgoing .getgenius_message {
-    background: linear-gradient(90deg, #23272f 60%, #444950 100%) !important;
-    color: #fff !important;
-    align-self: flex-end !important;
-    border-bottom-right-radius: 0 !important;
-    border-top-right-radius: 8px !important;
-    border-top-left-radius: 16px !important;
-    border-bottom-left-radius: 16px !important;
-    margin-bottom: 2px !important;
+    background: linear-gradient(90deg, #23272f 60%, #444950 100%);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    margin-bottom: 2px;
 }
 
 .getgenius_message {
-    padding: 11px 16px !important;
-    border-radius: 16px !important;
-    max-width: 80% !important;
-    word-break: break-word !important;
-    font-size: 1rem !important;
-    margin: 0 !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
-    line-height: 1.5 !important;
-    font-family: inherit !important;
+    padding: 11px 16px;
+    border-radius: 16px;
+    max-width: 80%;
+    word-break: break-word;
+    font-size: 1rem;
+    margin: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    line-height: 1.5;
+    font-family: inherit;
 }
 
 .getgenius_chatbox .chat p.error {
-    background: #ff3737e8 !important;
-    color: #fff !important;
+    background: #ff3737e8;
+    color: #fff;
 }
 
 .getgenius_chat-input {
-    padding: 14px 14px 14px 14px !important;
-    border-top: 1px solid #e0e0e0 !important;
-    background: #fafafa !important;
-    display: flex !important;
-    gap: 10px !important;
-    align-items: center !important;
-    position: relative !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    z-index: 10 !important;
+    padding: 14px 14px 14px 14px;
+    border-top: 1px solid #e0e0e0;
+    background: #fafafa;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 10;
 }
 .getgenius_input {
-    min-height: 38px !important;
-    max-height: 90px !important;
-    padding: 10px 12px !important;
-    background: #f3f3f3 !important;
-    font-size: 1rem !important;
-    color: #222 !important;
-    font-weight: 400 !important;
-    transition: border 0.2s, box-shadow 0.2s !important;
-    width: 100% !important;
-    border: 1.5px solid #e0e0e0 !important;
-    border-radius: 8px !important;
-    resize: none !important;
-    outline: none !important;
-    overflow-y: auto !important;
-    box-shadow: none !important;
+    min-height: 38px;
+    max-height: 90px;
+    padding: 10px 12px;
+    background: #f3f3f3;
+    font-size: 1rem;
+    color: #222;
+    font-weight: 400;
+    transition: border 0.2s, box-shadow 0.2s;
+    width: 100%;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    resize: none;
+    outline: none;
+    overflow-y: auto;
+    box-shadow: none;
 }
 .getgenius_input:focus {
-    border: 1.5px solid #2f8d46 !important;
-    box-shadow: 0 0 0 2px #2f8d4633 !important;
+    border: 1.5px solid #2f8d46;
+    box-shadow: 0 0 0 2px #2f8d4633;
 }
 
 .getgenius_btn-send {
-    padding: 12px 20px !important;
-    border: none !important;
-    border-radius: 8px !important;
-    background: linear-gradient(90deg, #23272f 60%, #444950 100%) !important;
-    color: #fff !important;
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    transition: background 0.2s, box-shadow 0.2s !important;
-    min-width: 70px !important;
-    justify-content: center !important;
-    display: flex !important;
-    align-items: center !important;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #23272f 60%, #444950 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    min-width: 70px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
 }
 .getgenius_btn-send:hover {
-    background: linear-gradient(90deg, #444950 60%, #23272f 100%) !important;
+    background: linear-gradient(90deg, #444950 60%, #23272f 100%);
 }
 
 .lastMessage {
@@ -299,28 +299,28 @@
 }
 
 .getgenius_open-btn {
-    position: fixed !important;
-    bottom: 32px !important;
-    right: 32px !important;
-    width: 60px !important;
-    height: 60px !important;
-    border-radius: 50% !important;
-    background: linear-gradient(135deg, #23272f 60%, #444950 100%) !important;
-    color: #fff !important;
-    border: none !important;
-    box-shadow: 0 2px 12px rgba(47, 141, 70, 0.18) !important;
-    font-size: 2rem !important;
-    cursor: pointer !important;
-    z-index: 9999 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: background 0.2s, box-shadow 0.2s !important;
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #23272f 60%, #444950 100%);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 12px rgba(47, 141, 70, 0.18);
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, box-shadow 0.2s;
 }
 
 .getgenius_open-btn:hover {
-    background: linear-gradient(135deg, #444950 60%, #23272f 100%) !important;
-    box-shadow: 0 4px 16px rgba(47, 141, 70, 0.22) !important;
+    background: linear-gradient(135deg, #444950 60%, #23272f 100%);
+    box-shadow: 0 4px 16px rgba(47, 141, 70, 0.22);
 }
 
 @keyframes fadeIn {
